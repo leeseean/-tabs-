@@ -1,0 +1,36 @@
+app.directive('tabs',function(){
+  return{
+    retrict:'E',
+    transclude:true,
+    scope:{},
+    controller:['$scope',function($scope){
+      var panes = $scope.panes = [];
+      $scope.selected = function(pane){
+        angular.forEach(panes,function(item){
+          item.selected = false;
+        });
+        pane.selected = true;
+      };
+      this.addPane = function(pane){
+        if(panes.length == 0){
+          $scope.select(pane);
+        };
+        panes.push(pane);
+      }
+    }],
+    template:'<div class="tabbable">'+'<ul class="nav nav-tabs"'+'<li ng-reapt="pane in panes" ng-class="active:pane.selected">'+'<a href="" ng-click="select(pane)">{{title}}</a>'+'</li>'+'</ul>'+'<div class="tab-content" ng-transclude></div>>'+'</div>',
+    replace:true
+  };
+}).directive('pane',function(){
+  return{
+    require:'^tabs',
+    restrict:'E',
+    transclude:true,
+    scope:{title:@},
+    link:function(scope,ele,attrs,tabsCtrl){
+      tabsCtrl.addPane(scope);
+    },
+    template:'<div class="tab-pane" ng-class="active:selected">'+'</div>',
+    replace:true
+  };
+})
